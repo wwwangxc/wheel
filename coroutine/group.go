@@ -29,6 +29,10 @@ func NewGroup(ctx context.Context, opts ...GroupOption) Group {
 		rateLimit:     make(chan struct{}, o.concurrencyLevel),
 	}
 
+	for i := 0; i < o.concurrencyLevel; i++ {
+		g.rateLimit <- struct{}{}
+	}
+
 	g.watchError()
 	return g
 }
@@ -56,7 +60,13 @@ func (s *groupImpl) Go(fn GoFunc) {
 	}
 
 	Go(
-		func() error { return fn(s.ctx) },
+		func() error {
+			defer func() {
+				s.rateLimit <- struct{}{}
+			}()
+
+			return fn(s.ctx)
+		},
 		WithWaitGroup(&s.wg),
 		WithErrChan(s.errCh),
 	)
