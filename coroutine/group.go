@@ -3,6 +3,8 @@ package coroutine
 import (
 	"context"
 	"sync"
+
+	"github.com/wwwangxc/wheel"
 )
 
 // GoFunc is the function executed in each coroutine
@@ -25,7 +27,8 @@ func NewGroup(ctx context.Context, opts ...GroupOption) Group {
 		ctxCancel:     sync.OnceFunc(cancel),
 		cancelOnError: o.cancelOnError,
 		err:           newGroupError(),
-		errCh:         make(chan error, 1),
+		errCh:         make(chan error, o.concurrencyLevel),
+		fnCh:          make(chan GoFunc, 100),
 		rateLimit:     make(chan struct{}, o.concurrencyLevel),
 	}
 
@@ -33,7 +36,7 @@ func NewGroup(ctx context.Context, opts ...GroupOption) Group {
 		g.rateLimit <- struct{}{}
 	}
 
-	g.watchError()
+	g.watch()
 	return g
 }
 
@@ -43,6 +46,7 @@ type groupImpl struct {
 	cancelOnError bool
 	err           *GroupError
 	errCh         chan error
+	fnCh          chan GoFunc
 	wg            sync.WaitGroup
 	rateLimit     chan struct{}
 }
@@ -53,42 +57,62 @@ func (s *groupImpl) Go(fn GoFunc) {
 		return
 	}
 
-	select {
-	case <-s.ctx.Done():
-		return
-	case <-s.rateLimit:
-	}
-
-	Go(
-		func() error {
-			defer func() {
-				s.rateLimit <- struct{}{}
-			}()
-
-			return fn(s.ctx)
-		},
-		WithWaitGroup(&s.wg),
-		WithErrChan(s.errCh),
-	)
+	s.fnCh <- fn
 }
 
 // Wait until all given function have finished executing
 func (s *groupImpl) Wait() *GroupError {
 	done := make(chan struct{})
 
-	wait := func() error {
+	Go(func() error {
 		s.wg.Wait()
 		close(done)
 		return nil
-	}
-	Go(wait)
+	})
 
 	select {
 	case <-s.ctx.Done():
-		return s.err
 	case <-done:
-		return s.err
 	}
+
+	return s.err
+}
+
+func (s *groupImpl) watch() {
+	wheel.DoIfNotNil(s, func() {
+		s.watchFn()
+		s.watchError()
+	})
+}
+
+func (s *groupImpl) watchFn() {
+	if s.alreadyDone() {
+		return
+	}
+
+	Go(func() error {
+		for fn := range s.fnCh {
+			select {
+			case <-s.ctx.Done():
+				return nil
+			case <-s.rateLimit:
+			}
+
+			Go(
+				func() error {
+					defer func() {
+						s.rateLimit <- struct{}{}
+					}()
+
+					return fn(s.ctx)
+				},
+				WithWaitGroup(&s.wg),
+				WithErrChan(s.errCh),
+			)
+		}
+
+		return nil
+	})
 }
 
 func (s *groupImpl) watchError() {
