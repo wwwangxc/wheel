@@ -2,6 +2,7 @@ package coroutine
 
 import (
 	"context"
+	"errors"
 	"sync"
 
 	"github.com/wwwangxc/wheel"
@@ -91,10 +92,18 @@ func (s *groupImpl) watchFn() {
 	}
 
 	Go(func() error {
-		for fn := range s.fnCh {
+	Loop:
+		for {
+			var fn GoFunc
 			select {
 			case <-s.ctx.Done():
-				return nil
+				break Loop
+			case fn = <-s.fnCh:
+			}
+
+			select {
+			case <-s.ctx.Done():
+				break Loop
 			case <-s.rateLimit:
 			}
 
@@ -111,6 +120,10 @@ func (s *groupImpl) watchFn() {
 			)
 		}
 
+		if errors.Is(s.ctx.Err(), context.DeadlineExceeded) {
+			s.err.alreadyTimeout()
+		}
+
 		return nil
 	})
 }
@@ -121,21 +134,29 @@ func (s *groupImpl) watchError() {
 	}
 
 	Go(func() error {
-		for {
-			select {
-			case <-s.ctx.Done():
+		for err := range s.errCh {
+			s.err.append(err)
+			if s.cancelOnError {
+				s.ctxCancel()
 				return nil
-			case err, ok := <-s.errCh:
-				if !ok {
-					return nil
-				}
-
-				s.err.append(err)
-				if s.cancelOnError {
-					s.ctxCancel()
-				}
 			}
 		}
+		return nil
+		//for {
+		//	select {
+		//	case <-s.ctx.Done():
+		//		return nil
+		//	case err, ok := <-s.errCh:
+		//		if !ok {
+		//			return nil
+		//		}
+
+		//		s.err.append(err)
+		//		if s.cancelOnError {
+		//			s.ctxCancel()
+		//		}
+		//	}
+		//}
 	})
 }
 
