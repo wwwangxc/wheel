@@ -28,8 +28,8 @@ func NewGroup(ctx context.Context, opts ...GroupOption) Group {
 		ctxCancel:     sync.OnceFunc(cancel),
 		cancelOnError: o.cancelOnError,
 		err:           newGroupError(),
-		errCh:         make(chan error, o.concurrencyLevel),
-		fnCh:          make(chan GoFunc, 100),
+		errQ:          make(chan error, o.concurrencyLevel),
+		fnQ:           make(chan GoFunc, 100),
 		rateLimit:     make(chan struct{}, o.concurrencyLevel),
 	}
 
@@ -46,8 +46,9 @@ type groupImpl struct {
 	ctxCancel     context.CancelFunc
 	cancelOnError bool
 	err           *GroupError
-	errCh         chan error
-	fnCh          chan GoFunc
+	errQ          chan error
+	fnQ           chan GoFunc
+	fnWG          sync.WaitGroup
 	wg            sync.WaitGroup
 	rateLimit     chan struct{}
 }
@@ -58,22 +59,26 @@ func (s *groupImpl) Go(fn GoFunc) {
 		return
 	}
 
-	s.fnCh <- fn
+	s.fnQ <- fn
+	s.fnWG.Add(1)
 }
 
 // Wait until all given function have finished executing
 func (s *groupImpl) Wait() *GroupError {
-	done := make(chan struct{})
+	allFnDone := make(chan struct{})
 
-	Go(func() error {
+	Go(func() {
+		s.fnWG.Wait()
 		s.wg.Wait()
-		close(done)
-		return nil
+		close(allFnDone)
 	})
 
 	select {
 	case <-s.ctx.Done():
-	case <-done:
+		if errors.Is(s.ctx.Err(), context.DeadlineExceeded) {
+			s.err.alreadyTimeout()
+		}
+	case <-allFnDone:
 	}
 
 	return s.err
@@ -91,40 +96,41 @@ func (s *groupImpl) watchFn() {
 		return
 	}
 
-	Go(func() error {
-	Loop:
+	Go(func() {
 		for {
 			var fn GoFunc
+			var ok bool
 			select {
 			case <-s.ctx.Done():
-				break Loop
-			case fn = <-s.fnCh:
+				return
+			case fn, ok = <-s.fnQ:
+				if !ok {
+					return
+				}
+				s.fnWG.Done()
 			}
 
 			select {
 			case <-s.ctx.Done():
-				break Loop
-			case <-s.rateLimit:
+				return
+			case _, ok = <-s.rateLimit:
+				if !ok {
+					return
+				}
 			}
 
 			Go(
-				func() error {
+				func() {
 					defer func() {
 						s.rateLimit <- struct{}{}
 					}()
 
-					return fn(s.ctx)
+					if err := fn(s.ctx); err != nil {
+						s.errQ <- err
+					}
 				},
-				WithWaitGroup(&s.wg),
-				WithErrChan(s.errCh),
-			)
+				WithWaitGroup(&s.wg))
 		}
-
-		if errors.Is(s.ctx.Err(), context.DeadlineExceeded) {
-			s.err.alreadyTimeout()
-		}
-
-		return nil
 	})
 }
 
@@ -133,30 +139,14 @@ func (s *groupImpl) watchError() {
 		return
 	}
 
-	Go(func() error {
-		for err := range s.errCh {
+	Go(func() {
+		for err := range s.errQ {
 			s.err.append(err)
 			if s.cancelOnError {
 				s.ctxCancel()
-				return nil
+				return
 			}
 		}
-		return nil
-		//for {
-		//	select {
-		//	case <-s.ctx.Done():
-		//		return nil
-		//	case err, ok := <-s.errCh:
-		//		if !ok {
-		//			return nil
-		//		}
-
-		//		s.err.append(err)
-		//		if s.cancelOnError {
-		//			s.ctxCancel()
-		//		}
-		//	}
-		//}
 	})
 }
 
