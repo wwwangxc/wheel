@@ -12,16 +12,16 @@ func WithWaitGroup(wg *sync.WaitGroup) Option {
 	}
 }
 
-// WithErrChan set error channel, it will put error into the error chan if function return error or panics
-func WithErrChan(ch chan<- error) Option {
+// WithLogWhenPanic set log func, it will be called when panic
+func WithLogWhenPanic(logFn func(v ...any)) Option {
 	return func(o *options) {
-		o.errCh = ch
+		o.logFn = logFn
 	}
 }
 
 type options struct {
 	wg    *sync.WaitGroup
-	errCh chan<- error
+	logFn func(v ...any)
 }
 
 func newOptions(opts ...Option) *options {

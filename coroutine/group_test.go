@@ -88,7 +88,6 @@ func TestGroup(t *testing.T) {
 
 					Convey("Error should be timeout", func() {
 						So(errors.Is(err.Error(), coroutine.ErrTimeout), ShouldBeTrue)
-						//So(err.Error(), ShouldBeError, coroutine.ErrTimeout)
 					})
 				})
 			})

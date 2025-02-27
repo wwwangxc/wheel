@@ -1,7 +1,6 @@
 package coroutine_test
 
 import (
-	"errors"
 	"sync"
 	"testing"
 	"time"
@@ -12,11 +11,9 @@ import (
 )
 
 func TestGo(t *testing.T) {
-	Convey("Given a function return error to be exected", t, func() {
-		errMessage := "this is an error message"
-		fn := func() error {
+	Convey("Given a function to be exected", t, func() {
+		fn := func() {
 			time.Sleep(100 * time.Millisecond)
-			return errors.New(errMessage)
 		}
 
 		Convey("Go with sync.WaitGroup", func() {
@@ -33,15 +30,6 @@ func TestGo(t *testing.T) {
 				So(&wg, shouldNotBeWaitting)
 			})
 
-		})
-
-		Convey("Go with error channel", func() {
-			ch := make(chan error, 1)
-			coroutine.Go(fn, coroutine.WithErrChan(ch))
-			time.Sleep(100 * time.Millisecond)
-			So(len(ch), ShouldEqual, 1)
-			err := <-ch
-			So(err.Error(), ShouldEqual, errMessage)
 		})
 	})
 }
