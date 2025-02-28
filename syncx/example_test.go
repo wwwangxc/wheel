@@ -2,6 +2,7 @@ package syncx_test
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
@@ -16,28 +17,66 @@ func ExampleWaitGroup() {
 	go func() {
 		defer wg.Done()
 		time.Sleep(100 * time.Millisecond)
-		fmt.Println("Groutine[1] DONE")
+		fmt.Println("  Goroutine[1] DONE")
 	}()
 
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
 		time.Sleep(200 * time.Millisecond)
-		fmt.Println("Groutine[2] DONE")
+		fmt.Println("  Goroutine[2] DONE")
 	}()
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
+	fmt.Println("Wait:")
 	select {
 	case <-ctx.Done():
-		fmt.Println("Timeout")
+		fmt.Println("  Context DONE")
 	case <-wg.Wait():
-		fmt.Println("ALL DONE")
+		fmt.Println("  ALL DONE")
 	}
 
+	ctx1, cancel1 := context.WithTimeout(context.Background(), 111*time.Millisecond)
+	defer cancel1()
+
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		time.Sleep(100 * time.Millisecond)
+		fmt.Println("  Goroutine[1] DONE")
+	}()
+
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		time.Sleep(200 * time.Millisecond)
+		fmt.Println("  Goroutine[2] DONE")
+	}()
+
+	fmt.Println("WaitOrDone:")
+	if err := wg.WaitOrDone(ctx1); err != nil {
+		switch {
+		case errors.Is(err, context.Canceled):
+			fmt.Println("  Context Cancel")
+		case errors.Is(err, context.DeadlineExceeded):
+			fmt.Println("  Context Timeout")
+		default:
+			fmt.Println(err)
+		}
+
+		return
+	}
+
+	fmt.Println("ALL DONE")
+
 	// Output:
-	// Groutine[1] DONE
-	// Groutine[2] DONE
-	// ALL DONE
+	// Wait:
+	//   Goroutine[1] DONE
+	//   Goroutine[2] DONE
+	//   ALL DONE
+	// WaitOrDone:
+	//   Goroutine[1] DONE
+	//   Context Timeout
 }
