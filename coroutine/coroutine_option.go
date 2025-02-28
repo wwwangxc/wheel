@@ -1,6 +1,11 @@
 package coroutine
 
-import "sync"
+import (
+	"sync"
+
+	"github.com/wwwangxc/wheel"
+	"github.com/wwwangxc/wheel/syncx"
+)
 
 // Option of coroutine
 type Option func(o *options)
@@ -8,7 +13,18 @@ type Option func(o *options)
 // WithWaitGroup set sync.WaitGroup
 func WithWaitGroup(wg *sync.WaitGroup) Option {
 	return func(o *options) {
-		o.wg = wg
+		wheel.DoIfNotNil(wg, func() {
+			o.wg = wg
+		})
+	}
+}
+
+// WithWaitGroupX set syncx.WaitGroup
+func WithWaitGroupX(wg *syncx.WaitGroup) Option {
+	return func(o *options) {
+		wheel.DoIfNotNil(wg, func() {
+			o.wgx = wg
+		})
 	}
 }
 
@@ -21,6 +37,7 @@ func WithLogWhenPanic(logFn func(v ...any)) Option {
 
 type options struct {
 	wg    *sync.WaitGroup
+	wgx   *syncx.WaitGroup
 	logFn func(v ...any)
 }
 
