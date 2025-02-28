@@ -30,6 +30,12 @@ func Flatten(m map[string]any) map[string]any {
 	for k, v := range m {
 		val := v
 
+		if reflectx.IsKindDeref(val, reflect.Struct) {
+			s := structs.New(val)
+			s.TagName = "json"
+			val = s.Map()
+		}
+
 		if !reflectx.IsKindDeref(val, reflect.Map) {
 			ret[k] = val
 			continue
