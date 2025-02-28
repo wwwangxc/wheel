@@ -32,22 +32,30 @@ func ExampleIsKindDeref() {
 	kindMap := map[string]any{}
 
 	fmt.Println(reflectx.IsKind(&kindString, reflect.String))        // false
+	fmt.Println(reflectx.IsKindDeref(kindString, reflect.String))    // true
 	fmt.Println(reflectx.IsKindDeref(&kindString, reflect.String))   // true
 	fmt.Println(reflectx.IsKind(&kindInt, reflect.Int))              // false
+	fmt.Println(reflectx.IsKindDeref(kindInt, reflect.Int))          // true
 	fmt.Println(reflectx.IsKindDeref(&kindInt, reflect.Int))         // true
 	fmt.Println(reflectx.IsKind(&kindFloat64, reflect.Float64))      // false
+	fmt.Println(reflectx.IsKindDeref(kindFloat64, reflect.Float64))  // true
 	fmt.Println(reflectx.IsKindDeref(&kindFloat64, reflect.Float64)) // true
 	fmt.Println(reflectx.IsKind(&kindMap, reflect.Map))              // false
+	fmt.Println(reflectx.IsKindDeref(kindMap, reflect.Map))          // true
 	fmt.Println(reflectx.IsKindDeref(&kindMap, reflect.Map))         // true
 
 	// Output:
 	// false
 	// true
-	// false
 	// true
 	// false
 	// true
+	// true
 	// false
+	// true
+	// true
+	// false
+	// true
 	// true
 }
 
