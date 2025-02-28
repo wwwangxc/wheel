@@ -39,7 +39,11 @@ func New(code ErrCode, message string, opts ...option) Error {
 // FromError convert error to errorx.Error
 func FromError(err error) (Error, bool) {
 	var e *errorImpl
-	return e, errors.As(err, &e)
+	if !errors.As(err, &e) {
+		return nil, false
+	}
+
+	return e, true
 }
 
 func (s *errorImpl) Code() uint32 {
