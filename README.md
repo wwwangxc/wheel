@@ -11,8 +11,13 @@ Hahaha
     - [DoIfNotNil](#doifnotnil)
     - [MustBeNil](#mustbenil)
     - [Time](#time)
-      - [(*Time) BeginOfDay](#\(*time\)-beginofday)
-      - [(*Time) EndOfDay](#\(*time\)-endofday)
+      - [(Time) BeginOfDay](#\(time\)-beginofday)
+      - [(Time) EndOfDay](#\(time\)-endofday)
+    - [Float](#float)
+      - [(Float) Add](#\(float\)-add)
+      - [(Float) Sub](#\(float\)-sub)
+      - [(Float) Mul](#\(float\)-mul)
+      - [(Float) Div](#\(float\)-div)
   - [wheel/coroutine](#wheelcoroutine)
     - [Go](#go)
     - [Group](#group)
@@ -124,7 +129,7 @@ func main() {
 
 #### Time
 
-##### (*Time) BeginOfDay
+##### (Time) BeginOfDay
 
 ```go
 package main
@@ -141,7 +146,7 @@ func main() {
 
 **[⬆ back to top](#contents)**
 
-##### (*Time) EndOfDay
+##### (Time) EndOfDay
 
 ```go
 package main
@@ -154,6 +159,97 @@ func main() {
     t, _ := time.Parse(time.DateTime, "2025-02-28 11:22:00")
     endOfDay := wheel.Time.EndOfDay(t) // 2025-02-28 23:59:59.999999999 +0800 CST
     endOfDay = wheel.Time.EndOfDayNow()
+}
+```
+
+**[⬆ back to top](#contents)**
+
+#### Float
+
+##### (Float) Add
+
+Returns the result of `a + b`.
+
+```go
+package main
+
+import (
+    "github.com/wwwangxc/wheel"
+)
+
+func main() {
+    a := float64(1.23456789)
+    b := float64(1.23456789)
+    
+    wheel.Float.Add(a, b)             // 2.46913578
+    wheel.Float.AddRounded(a, b, 2)   // 2.47
+    wheel.Float.AddTruncated(a, b, 2) // 2.46
+}
+```
+
+**[⬆ back to top](#contents)**
+
+#### (Float) Sub
+
+Returns the result of `a - b`.
+
+```go
+package main
+
+import (
+    "github.com/wwwangxc/wheel"
+)
+
+func main() {
+    a := float64(1.23456789)
+
+    wheel.Float.Sub(a, float64(0.00000001))             // 1.23456788
+    wheel.Float.SubRounded(a, float64(0.00000001), 4)   // 1.2346
+    wheel.Float.SubTruncated(a, float64(0.00000001), 4) // 1.2345
+}
+```
+
+**[⬆ back to top](#contents)**
+
+#### (Float) Mul
+
+Returns the result of `a * b`.
+
+```go
+package main
+
+import (
+    "github.com/wwwangxc/wheel"
+)
+
+func main() {
+    a := float64(1.23456789)
+
+    wheel.Float.Mul(a, float64(1.1))             // 1.358024679
+    wheel.Float.MulRounded(a, float64(1.1), 2)   // 1.36
+    wheel.Float.MulTruncated(a, float64(1.1), 2) // 1.35
+}
+```
+
+**[⬆ back to top](#contents)**
+
+#### (Float) Div
+
+Returns the result of `a / b`.
+
+```go
+package main
+
+import (
+    "github.com/wwwangxc/wheel"
+)
+
+func main() {
+    a := float64(1.23456789)
+
+    wheel.Float.Div(a, float64(10))             // 0.123456789
+    wheel.Float.DivRounded(a, float64(10), 4)   // 0.1235
+    wheel.Float.DivTruncated(a, float64(10), 4) // 0.1234
 }
 ```
 
