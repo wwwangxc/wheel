@@ -11,13 +11,13 @@ Hahaha
     - [DoIfNotNil](#doifnotnil)
     - [MustBeNil](#mustbenil)
     - [Time](#time)
-      - [(Time) BeginOfDay](#\(time\)-beginofday)
-      - [(Time) EndOfDay](#\(time\)-endofday)
+      - [(Time) BeginOfDay](#time-beginofday)
+      - [(Time) EndOfDay](#time-endofday)
     - [Float](#float)
-      - [(Float) Add](#\(float\)-add)
-      - [(Float) Sub](#\(float\)-sub)
-      - [(Float) Mul](#\(float\)-mul)
-      - [(Float) Div](#\(float\)-div)
+      - [(Float) Add](#float-add)
+      - [(Float) Sub](#float-sub)
+      - [(Float) Mul](#float-mul)
+      - [(Float) Div](#float-div)
   - [wheel/coroutine](#wheelcoroutine)
     - [Go](#go)
     - [Group](#group)
@@ -165,6 +165,8 @@ func main() {
 **[⬆ back to top](#contents)**
 
 #### Float
+
+Safer handling of float64 operations.
 
 ##### (Float) Add
 
