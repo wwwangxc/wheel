@@ -2,10 +2,18 @@ package wheel
 
 import "github.com/wwwangxc/wheel/reflectx"
 
-// ValueOrDefault when the value is the zero value of the type, return the specified default value.
-func ValueOrDefault[T any](val, defaultVal T) T {
-	if reflectx.IsZeroValue(val) {
-		return defaultVal
+// Or return the first non-zero value in the list.
+// If all values are zero, return the first value.
+func Or[T any](val T, vals ...T) T {
+	if !reflectx.IsZeroValue(val) {
+		return val
+	}
+
+	for _, v := range vals {
+		if reflectx.IsZeroValue(v) {
+			continue
+		}
+		return v
 	}
 
 	return val

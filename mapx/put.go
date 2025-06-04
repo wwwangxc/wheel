@@ -20,5 +20,5 @@ func PutOrDefault[K comparable, V any](m map[K]V, key K, val, defaultVal V) {
 		return
 	}
 
-	m[key] = wheel.ValueOrDefault(val, defaultVal)
+	m[key] = wheel.Or(val, defaultVal)
 }
