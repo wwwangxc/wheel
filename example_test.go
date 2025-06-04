@@ -8,14 +8,16 @@ import (
 	"github.com/wwwangxc/wheel"
 )
 
-func ExampleValueOrDefault() {
-	fmt.Println(wheel.ValueOrDefault("string", "default_string")) // string
-	fmt.Println(wheel.ValueOrDefault("", "default_string"))       // default_string
-	fmt.Println(wheel.ValueOrDefault(666, 888))                   // 666
-	fmt.Println(wheel.ValueOrDefault(0, 888))                     // 666
+func ExampleOr() {
+	fmt.Println(wheel.Or("string_1", "string_2", "default_string")) // string_1
+	fmt.Println(wheel.Or("", "string_2", "default_string"))         // string_2
+	fmt.Println(wheel.Or("", "", "default_string"))                 // default_string
+	fmt.Println(wheel.Or(666, 888))                                 // 666
+	fmt.Println(wheel.Or(0, 888))                                   // 888
 
 	// Output:
-	// string
+	// string_1
+	// string_2
 	// default_string
 	// 666
 	// 888

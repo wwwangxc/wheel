@@ -7,7 +7,7 @@ Hahaha
 - [Install](#install)
 - [Quick Start](#quick-start)
   - [wheel](#wheel)
-    - [ValueOrDefault](#valueordefault)
+    - [Or](#or)
     - [DoIfNotNil](#doifnotnil)
     - [MustBeNil](#mustbenil)
     - [Time](#time)
@@ -51,9 +51,10 @@ go get github.com/wwwangxc/wheel
 
 About the global functions.
 
-#### ValueOrDefault
+#### Or
 
-When the value is the zero value of the type, return the specified default value.
+Rreturn the first non-zero value in the list.
+If all values are zero, return the first value.
 
 ```go
 package main
@@ -63,8 +64,11 @@ import (
 )
 
 func main() {
-    _ = wheel.ValueOrDefault("string", "default") // string
-    _ = wheel.ValueOrDefault("", "default")       // default
+    wheel.Or("string_1", "string_2", "default_string") // string_1
+    wheel.Or("", "string_2", "default_string")         // string_2
+    wheel.Or("", "", "default_string")                 // default_string
+    wheel.Or(666, 888))                                // 666
+    wheel.Or(0, 888))                                  // 888
 }
 ```
 
