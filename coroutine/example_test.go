@@ -15,8 +15,9 @@ func ExampleGo() {
 	errCh := make(chan error)
 	defer close(errCh)
 
-	logFn := func(v ...any) {
-		fmt.Println(v...)
+	callback := func(err error) {
+		fmt.Println(err)
+		// do something...
 	}
 
 	coroutine.Go(
@@ -40,7 +41,7 @@ func ExampleGo() {
 			panic("panic message")
 		},
 		coroutine.WithWaitGroup(&wg),
-		coroutine.WithLogWhenPanic(logFn))
+		coroutine.WithCallbackWhenPanic(callback))
 
 	wg.Wait()
 

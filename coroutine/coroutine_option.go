@@ -28,17 +28,17 @@ func WithWaitGroupX(wg *syncx.WaitGroup) Option {
 	}
 }
 
-// WithLogWhenPanic set log func, it will be called when panic
-func WithLogWhenPanic(logFn func(v ...any)) Option {
+// WithCallbackWhenPanic set callback func, it will be called when panic
+func WithCallbackWhenPanic(fn func(error)) Option {
 	return func(o *options) {
-		o.logFn = logFn
+		o.callbackWhenPanic = fn
 	}
 }
 
 type options struct {
-	wg    *sync.WaitGroup
-	wgx   *syncx.WaitGroup
-	logFn func(v ...any)
+	wg                *sync.WaitGroup
+	wgx               *syncx.WaitGroup
+	callbackWhenPanic func(error)
 }
 
 func newOptions(opts ...Option) *options {

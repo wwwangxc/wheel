@@ -2,6 +2,8 @@
 package coroutine
 
 import (
+	"fmt"
+
 	"github.com/wwwangxc/wheel"
 )
 
@@ -17,7 +19,16 @@ func Go(fn func(), opts ...Option) {
 			wheel.DoIfNotNil(o.wgx, func() { o.wgx.Done() })
 
 			if err := recover(); err != nil {
-				wheel.DoIfNotNil(o.logFn, func() { o.logFn(err) })
+				wheel.DoIfNotNil(
+					o.callbackWhenPanic,
+					func() {
+						e, ok := err.(error)
+						if !ok {
+							e = fmt.Errorf("%+v", err)
+						}
+
+						o.callbackWhenPanic(e)
+					})
 			}
 		}()
 
