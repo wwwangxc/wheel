@@ -272,7 +272,7 @@ Safed go function.
 - You can set sync.WaitGroup and it will call Add(1) before call the specified function,
 and it will call Done() after call the specified function too.
 
-- You can set logging write function, it will be called when panic.
+- You can set the callback function, and it will be called when panic.
 
 ```go
 package main
@@ -283,16 +283,17 @@ import (
 
 func main() {
     var wg sync.WaitGroup
-    logFn := func(v ...any) {
-        fmt.Println(v...)
+    callback := func(err error) {
+        fmt.Println(err)
+        // do something...
     }
 
     coroutine.Go(
         func(){
             // do something...
         },
-        coroutine.WithWaitGroup(&wg),      // set sync.WaitGroup
-        coroutine.WithLogWhenPainc(logFn)) // write log when panic
+        coroutine.WithWaitGroup(&wg),              // set sync.WaitGroup
+        coroutine.WithCallbackWhenPanic(callback)) // called callback function when panic
 
     // Wait group
     wg.Wait()
