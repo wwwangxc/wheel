@@ -27,6 +27,11 @@ func ExampleWaitGroup() {
 		fmt.Println("  Goroutine[2] DONE")
 	}()
 
+	wg.Go(func() {
+		time.Sleep(300 * time.Millisecond)
+		fmt.Println("  Goroutine[3] DONE")
+	})
+
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
@@ -55,6 +60,11 @@ func ExampleWaitGroup() {
 		fmt.Println("  Goroutine[2] DONE")
 	}()
 
+	wg.Go(func() {
+		time.Sleep(300 * time.Millisecond)
+		fmt.Println("  Goroutine[3] DONE")
+	})
+
 	fmt.Println("WaitOrDone:")
 	if err := wg.WaitOrDone(ctx1); err != nil {
 		switch {
@@ -75,6 +85,7 @@ func ExampleWaitGroup() {
 	// Wait:
 	//   Goroutine[1] DONE
 	//   Goroutine[2] DONE
+	//   Goroutine[3] DONE
 	//   ALL DONE
 	// WaitOrDone:
 	//   Goroutine[1] DONE

@@ -731,11 +731,10 @@ func main() {
         // do something...
     }()
 
-    wg.Add(1)
-    go func() {
-        defer wg.Done()
+    // runs the given function in a new goroutine. will auto call Add and Done.
+    wg.Go(func(){
         // do something...
-    }()
+    })
 
     ctx, cancel := context.WithTimeout(context.Background(), time.Second)
     defer cancel()

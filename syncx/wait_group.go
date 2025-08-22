@@ -20,6 +20,15 @@ func (s *WaitGroup) Done() {
 	s.wg.Done()
 }
 
+// Go runs the given function in a new goroutine. will auto call Add and Done.
+func (s *WaitGroup) Go(fn func()) {
+	s.Add(1)
+	go func() {
+		defer s.Done()
+		fn()
+	}()
+}
+
 // Wait return a channel, the channel will close when the `sync.WaitGroup` counter is zero.
 func (s *WaitGroup) Wait() <-chan struct{} {
 	return s.watchDone()
