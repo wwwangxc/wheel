@@ -4,38 +4,7 @@ Hahaha
 
 ## Contents
 
-- [Install](#install)
-- [Quick Start](#quick-start)
-  - [wheel](#wheel)
-    - [Or](#or)
-    - [DoIfNotNil](#doifnotnil)
-    - [MustBeNil](#mustbenil)
-    - [Time](#time)
-      - [(Time) BeginOfDay](#time-beginofday)
-      - [(Time) EndOfDay](#time-endofday)
-    - [Float](#float)
-      - [(Float) Add](#float-add)
-      - [(Float) Sub](#float-sub)
-      - [(Float) Mul](#float-mul)
-      - [(Float) Div](#float-div)
-  - [wheel/coroutine](#wheelcoroutine)
-    - [Go](#go)
-    - [Group](#group)
-  - [wheel/errorx](#wheelerrorx)
-  - [wheel/mapx](#wheelmapx)
-    - [Flatten](#flatten)
-    - [FlattenFromStruct](#flattenfromstruct)
-    - [GetOrDefault](#getordefault)
-    - [PutIfNotZero](#putifnotzero)
-    - [PutOrDefault](#putordefault)
-  - [wheel/reflectx](#wheelreflectx)
-    - [IsKind](#iskind)
-    - [IsKindDeref](#iskindderef)
-    - [IsZeroValue](#iszerovalue)
-    - [IsNil](#isnil)
-    - [Deref](#deref)
-  - [wheel/syncx](#wheelsyncx)
-    - [WaitGroup](#waitgroup)
+[[_toc_]]
 
 ## Install
 
@@ -195,7 +164,7 @@ func main() {
 
 **[⬆ back to top](#contents)**
 
-#### (Float) Sub
+##### (Float) Sub
 
 Returns the result of `a - b`.
 
@@ -217,7 +186,7 @@ func main() {
 
 **[⬆ back to top](#contents)**
 
-#### (Float) Mul
+##### (Float) Mul
 
 Returns the result of `a * b`.
 
@@ -239,7 +208,7 @@ func main() {
 
 **[⬆ back to top](#contents)**
 
-#### (Float) Div
+##### (Float) Div
 
 Returns the result of `a / b`.
 
@@ -256,6 +225,89 @@ func main() {
     wheel.Float.Div(a, float64(10))             // 0.123456789
     wheel.Float.DivRounded(a, float64(10), 4)   // 0.1235
     wheel.Float.DivTruncated(a, float64(10), 4) // 0.1234
+}
+```
+
+**[⬆ back to top](#contents)**
+
+##### (Float) Abs
+
+Returns the absolute value.
+
+```go
+package main
+
+import (
+    "github.com/wwwangxc/wheel"
+)
+
+func main() {
+    a := float64(-1.23456789)
+
+    wheel.Float.Abs(a) // 1.23456789
+}
+```
+
+**[⬆ back to top](#contents)**
+
+##### (Float) Floor
+
+Returns the nearest integer value less than or equal to value.
+
+```go
+package main
+
+import (
+    "github.com/wwwangxc/wheel"
+)
+
+func main() {
+    a := float64(5.9)
+
+    wheel.Float.Floor(a) // 5.000000
+}
+```
+
+**[⬆ back to top](#contents)**
+
+##### (Float) Ceil
+
+Returns the nearest integer value greater than or equal to value.
+
+```go
+package main
+
+import (
+    "github.com/wwwangxc/wheel"
+)
+
+func main() {
+    a := float64(5.1)
+
+    wheel.Float.Ceil(a) // 6.000000
+}
+```
+
+**[⬆ back to top](#contents)**
+
+##### (Float) Compare
+
+```go
+package main
+
+import (
+    "github.com/wwwangxc/wheel"
+)
+
+func main() {
+    a := float64(5.1)
+    b := float64(5.1)
+
+    wheel.Float.Equal(a, b) // true
+    wheel.Float.GT(a, b)    // false
+    wheel.Float.GTE(a, b)   // true
+    wheel.Float.LT(a, b)    // false
+    wheel.Float.LTE(a, b)   // true
 }
 ```
 

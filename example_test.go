@@ -72,44 +72,89 @@ func ExampleTime() {
 }
 
 func ExampleFloat() {
-	a := float64(1.23456789)
-	b := float64(1.23456789)
+	a := float64(1.234567)
 
-	fmt.Println("1.23456789 + 1.23456789 = ?")
-	fmt.Println(wheel.Float.Add(a, b))             // 2.46913578
+	b := float64(1.234567)
+	fmt.Printf("%f + %f = ?\n", a, b)
+	fmt.Println(wheel.Float.Add(a, b))             // 2.469134
 	fmt.Println(wheel.Float.AddRounded(a, b, 2))   // 2.47
 	fmt.Println(wheel.Float.AddTruncated(a, b, 2)) // 2.46
 
-	fmt.Println("1.23456789 - 0.00000001 = ?")
-	fmt.Println(wheel.Float.Sub(a, float64(0.00000001)))             // 1.23456788
-	fmt.Println(wheel.Float.SubRounded(a, float64(0.00000001), 4))   // 1.2346
-	fmt.Println(wheel.Float.SubTruncated(a, float64(0.00000001), 4)) // 1.2345
+	b = float64(0.000001)
+	fmt.Printf("%f - %f = ?\n", a, b)
+	fmt.Println(wheel.Float.Sub(a, b))             // 1.234566
+	fmt.Println(wheel.Float.SubRounded(a, b, 3))   // 1.235
+	fmt.Println(wheel.Float.SubTruncated(a, b, 3)) // 1.234
 
-	fmt.Println("1.23456789 * 1.1 = ?")
-	fmt.Println(wheel.Float.Mul(a, float64(1.1)))             // 1.358024679
-	fmt.Println(wheel.Float.MulRounded(a, float64(1.1), 2))   // 1.36
-	fmt.Println(wheel.Float.MulTruncated(a, float64(1.1), 2)) // 1.35
+	b = float64(1.1)
+	fmt.Printf("%f * %.1f = ?\n", a, b)
+	fmt.Println(wheel.Float.Mul(a, b))             // 1.3580237
+	fmt.Println(wheel.Float.MulRounded(a, b, 2))   // 1.36
+	fmt.Println(wheel.Float.MulTruncated(a, b, 2)) // 1.35
 
-	fmt.Println("1.23456789 / 10 = ?")
-	fmt.Println(wheel.Float.Div(a, float64(10)))             // 0.123456789
-	fmt.Println(wheel.Float.DivRounded(a, float64(10), 4))   // 0.1235
-	fmt.Println(wheel.Float.DivTruncated(a, float64(10), 4)) // 0.1234
+	b = float64(10)
+	fmt.Printf("%f / %.0f = ?\n", a, b)
+	fmt.Println(wheel.Float.Div(a, b))             // 0.1234567
+	fmt.Println(wheel.Float.DivRounded(a, b, 4))   // 0.1235
+	fmt.Println(wheel.Float.DivTruncated(a, b, 4)) // 0.1234
+
+	b = float64(-1.234567)
+	fmt.Printf("Abs(%f) = %f\n", b, wheel.Float.Abs(b)) // Abs(-1.234567) = 1.2345
+
+	b = float64(5.9)
+	fmt.Printf("Floor(%.1f) = %f\n", b, wheel.Float.Floor(b)) // Floor(5.9) = 5.000000
+
+	b = float64(5.1)
+	fmt.Printf("Ceil(%.1f) = %f\n", b, wheel.Float.Ceil(b)) // Ceil(5.1) = 6.000000
+
+	b = float64(0.123456)
+	fmt.Printf("Equal(%f, %f) = %t\n", a, a, wheel.Float.Equal(a, a)) // Equal(1.234567, 1.234567) = true
+	fmt.Printf("Equal(%f, %f) = %t\n", a, b, wheel.Float.Equal(a, b)) // Equal(1.234567, 0.123456) = false
+	fmt.Printf("GT(%f, %f) = %t\n", a, a, wheel.Float.GT(a, a))       // GT(1.234567, 1.234567) = false
+	fmt.Printf("GT(%f, %f) = %t\n", a, b, wheel.Float.GT(a, b))       // GT(1.234567, 0.123456) = true
+	fmt.Printf("GT(%f, %f) = %t\n", b, a, wheel.Float.GT(b, a))       // GT(0.123456, 1.234567) = false
+	fmt.Printf("GTE(%f, %f) = %t\n", a, a, wheel.Float.GTE(a, a))     // GTE(1.234567, 1.234567) = true
+	fmt.Printf("GTE(%f, %f) = %t\n", a, b, wheel.Float.GTE(a, b))     // GTE(1.234567, 0.123456) = true
+	fmt.Printf("GTE(%f, %f) = %t\n", b, a, wheel.Float.GTE(b, a))     // GTE(0.123456, 1.234567) = false
+	fmt.Printf("LT(%f, %f) = %t\n", a, a, wheel.Float.LT(a, a))       // LT(1.234567, 1.234567) = false
+	fmt.Printf("LT(%f, %f) = %t\n", a, b, wheel.Float.LT(a, b))       // LT(1.234567, 0.123456) = false
+	fmt.Printf("LT(%f, %f) = %t\n", b, a, wheel.Float.LT(b, a))       // LT(0.123456, 1.234567) = true
+	fmt.Printf("LTE(%f, %f) = %t\n", a, a, wheel.Float.LTE(a, a))     // LTE(1.234567, 1.234567) = true
+	fmt.Printf("LTE(%f, %f) = %t\n", a, b, wheel.Float.LTE(a, b))     // LTE(1.234567, 0.123456) = false
+	fmt.Printf("LTE(%f, %f) = %t\n", b, a, wheel.Float.LTE(b, a))     // LTE(0.123456, 1.234567) = true
 
 	// Output:
-	// 1.23456789 + 1.23456789 = ?
-	// 2.46913578
+	// 1.234567 + 1.234567 = ?
+	// 2.469134
 	// 2.47
 	// 2.46
-	// 1.23456789 - 0.00000001 = ?
-	// 1.23456788
-	// 1.2346
-	// 1.2345
-	// 1.23456789 * 1.1 = ?
-	// 1.358024679
+	// 1.234567 - 0.000001 = ?
+	// 1.234566
+	// 1.235
+	// 1.234
+	// 1.234567 * 1.1 = ?
+	// 1.3580237
 	// 1.36
 	// 1.35
-	// 1.23456789 / 10 = ?
-	// 0.123456789
+	// 1.234567 / 10 = ?
+	// 0.1234567
 	// 0.1235
 	// 0.1234
+	// Abs(-1.234567) = 1.234567
+	// Floor(5.9) = 5.000000
+	// Ceil(5.1) = 6.000000
+	// Equal(1.234567, 1.234567) = true
+	// Equal(1.234567, 0.123456) = false
+	// GT(1.234567, 1.234567) = false
+	// GT(1.234567, 0.123456) = true
+	// GT(0.123456, 1.234567) = false
+	// GTE(1.234567, 1.234567) = true
+	// GTE(1.234567, 0.123456) = true
+	// GTE(0.123456, 1.234567) = false
+	// LT(1.234567, 1.234567) = false
+	// LT(1.234567, 0.123456) = false
+	// LT(0.123456, 1.234567) = true
+	// LTE(1.234567, 1.234567) = true
+	// LTE(1.234567, 0.123456) = false
+	// LTE(0.123456, 1.234567) = true
 }
