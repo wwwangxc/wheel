@@ -4,6 +4,7 @@ Hahaha
 
 ## Contents
 
+<<<<<<< Updated upstream
 - [Install](#install)
 - [Quick Start](#quick-start)
   - [wheel](#wheel)
@@ -36,6 +37,46 @@ Hahaha
     - [Deref](#deref)
   - [wheel/syncx](#wheelsyncx)
     - [WaitGroup](#waitgroup)
+||||||| Stash base
+[[_toc_]]
+=======
+- [Install](#install)
+- [Quick Start](#quick-start)
+  - [wheel](#wheel)
+    - [Or](#or)
+    - [DoIfNotNil](#doifnotnil)
+    - [MustBeNil](#mustbenil)
+    - [Time](#time)
+      - [(Time) BeginOfDay](#time-beginofday)
+      - [(Time) EndOfDay](#time-endofday)
+    - [Float](#float)
+      - [(Float) Add](#float-add)
+      - [(Float) Sub](#float-sub)
+      - [(Float) Mul](#float-mul)
+      - [(Float) Div](#float-div)
+      - [(Float) Abs](#float-abs)
+      - [(Float) Floor](#float-floor)
+      - [(Float) Ceil](#float-ceil)
+      - [(Float) Compare](#float-compare)
+  - [wheel/coroutine](#wheelcoroutine)
+    - [Go](#go)
+    - [Group](#group)
+  - [wheel/errorx](#wheelerrorx)
+  - [wheel/mapx](#wheelmapx)
+    - [Flatten](#flatten)
+    - [FlattenFromStruct](#flattenfromstruct)
+    - [GetOrDefault](#getordefault)
+    - [PutIfNotZero](#putifnotzero)
+    - [PutOrDefault](#putordefault)
+  - [wheel/reflectx](#wheelreflectx)
+    - [IsKind](#iskind)
+    - [IsKindDeref](#iskindderef)
+    - [IsZeroValue](#iszerovalue)
+    - [IsNil](#isnil)
+    - [Deref](#deref)
+  - [wheel/syncx](#wheelsyncx)
+    - [WaitGroup](#waitgroup)
+>>>>>>> Stashed changes
 
 ## Install
 
