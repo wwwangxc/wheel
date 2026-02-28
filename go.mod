@@ -6,6 +6,7 @@ require (
 	github.com/fatih/structs v1.1.0
 	github.com/shopspring/decimal v1.4.0
 	github.com/smartystreets/goconvey v1.8.1
+	golang.org/x/sync v0.8.0
 	google.golang.org/grpc v1.67.1
 )
 
