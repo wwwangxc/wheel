@@ -40,6 +40,7 @@ Hahaha
     - [Deref](#deref)
   - [wheel/syncx](#wheelsyncx)
     - [WaitGroup](#waitgroup)
+  - [wheel/singleflight](#wheelsingleflight)
 
 ## Install
 
@@ -853,6 +854,40 @@ func main() {
         default:
         }
     }
+}
+```
+
+**[⬆ back to top](#contents)**
+
+### wheel/singleflight
+
+The helper of singleflight.
+
+```go
+package main
+
+import (
+	"context"
+	"time"
+
+	"github.com/wwwangxc/wheel/singleflight"
+)
+
+func main() {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+
+	ret, err := singleflight.Do(ctx, "function_key",
+		func(ctx context.Context) (string, error) {
+			// dosomething...
+			return "Successfully", nil
+		}, singleflight.WithExpire(time.Minute)) // the function for key `function_key` will expire in 1 minute, default: 1s
+
+	if err != nil {
+		// dosomething...
+	}
+
+	// dosomething...
 }
 ```
 
