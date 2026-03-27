@@ -9,6 +9,8 @@ import (
 	"golang.org/x/sync/singleflight"
 )
 
+var group singleflight.Group
+
 // Do the given function with singleflight
 //
 // For details, see: https://pkg.go.dev/golang.org/x/sync/singleflight
@@ -16,11 +18,10 @@ func Do[T any](ctx context.Context,
 	key string, fn func(context.Context) (T, error), opts ...Option) (T, error) {
 
 	opt := newOptions(opts...)
-	var g singleflight.Group
-	ch := g.DoChan(key, func() (any, error) {
+	ch := group.DoChan(key, func() (any, error) {
 		go func() {
 			time.Sleep(opt.expire)
-			g.Forget(key)
+			group.Forget(key)
 		}()
 
 		return fn(ctx)

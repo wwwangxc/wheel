@@ -41,8 +41,12 @@ func Flatten(m map[string]any) map[string]any {
 			continue
 		}
 
-		mm := Flatten(val.(map[string]any))
-		for kk, vv := range mm {
+		mm, ok := val.(map[string]any)
+		if !ok {
+			ret[k] = val
+			continue
+		}
+		for kk, vv := range Flatten(mm) {
 			ret[fmt.Sprintf("%s.%s", k, kk)] = vv
 		}
 	}

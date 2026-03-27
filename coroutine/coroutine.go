@@ -15,9 +15,6 @@ func Go(fn func(), opts ...Option) {
 
 	go func() {
 		defer func() {
-			wheel.DoIfNotNil(o.wg, func() { o.wg.Done() })
-			wheel.DoIfNotNil(o.wgx, func() { o.wgx.Done() })
-
 			if err := recover(); err != nil {
 				wheel.DoIfNotNil(
 					o.callbackWhenPanic,
@@ -30,6 +27,9 @@ func Go(fn func(), opts ...Option) {
 						o.callbackWhenPanic(e)
 					})
 			}
+
+			wheel.DoIfNotNil(o.wg, func() { o.wg.Done() })
+			wheel.DoIfNotNil(o.wgx, func() { o.wgx.Done() })
 		}()
 
 		fn()
