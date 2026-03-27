@@ -140,11 +140,19 @@ func (s *groupImpl) watchError() {
 	}
 
 	Go(func() {
-		for err := range s.errQ {
-			s.err.append(err)
-			if s.cancelOnError {
-				s.ctxCancel()
+		for {
+			select {
+			case <-s.ctx.Done():
 				return
+			case err, ok := <-s.errQ:
+				if !ok {
+					return
+				}
+				s.err.append(err)
+				if s.cancelOnError {
+					s.ctxCancel()
+					return
+				}
 			}
 		}
 	})
